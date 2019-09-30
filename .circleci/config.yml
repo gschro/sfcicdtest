@@ -12,18 +12,30 @@ references:
   decrypt_devhub_key: &decrypt_devhub_key
     run:
       name: Decrypt DevHub key
+      command: >
+        openssl enc
+        -nosalt
+        -aes-256-cbc
+        -d -in .circleci/server.key.enc
+        -out server.key
+        -base64
+        -K "$KEY"
+        -iv "$IV"
+  decrypt_devhub_key: &decrypt_devhub_key_working
+    run:
+      name: Decrypt DevHub key
       command: |
         openssl version
         openssl enc -d -aes-256-cbc -md sha256 -in .circleci/server.key.enc -out server.key -K $KEY -iv $IV
-        find . -name "*.key"
+        find . -name "*.key"        
   authenticate_sfdx: &authenticate_sfdx
     run:
       name: Authenticate sfdx
       command: >
         sfdx force:auth:jwt:grant
-        --clientid $CONSUMERKEY
+        --clientid "$CONSUMERKEY"
         --jwtkeyfile server.key
-        --username $USERNAME
+        --username "$USERNAME"
         --setdefaultdevhubusername
   remove_key: &remove_key
     run:
