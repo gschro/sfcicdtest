@@ -19,6 +19,7 @@ references:
         -md sha256
         -in .circleci/server.key.enc
         -out server.key
+        -A
         -K $KEY
         -iv $IV
   decrypt_devhub_key_working_ok: &decrypt_devhub_key_working_ok
