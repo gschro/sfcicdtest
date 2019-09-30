@@ -15,6 +15,7 @@ references:
       command: |
         openssl version
         openssl enc -d -aes-256-cbc -md sha256 -in .circleci/server.key.enc -out server.key -K $KEY -iv $IV
+        find . -name "*.key"
   authenticate_sfdx: &authenticate_sfdx
     run:
       name: Authenticate sfdx
