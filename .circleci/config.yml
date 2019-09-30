@@ -15,11 +15,11 @@ references:
       command: >
         openssl enc
         -aes-256-cbc
-        -d -in .circleci/server.key.enc
+        -d
+        -in .circleci/server.key.enc
         -out server.key
-        -a
-        -A
         -base64
+        -md sha256
         -K "$KEY"
         -iv "$IV"
   decrypt_devhub_key_working_ok: &decrypt_devhub_key_working_ok
