@@ -1,0 +1,88 @@
+version: 2
+references:
+  container_config: &container_config
+    docker:
+      - image: circleci/node:8.11-stretch
+    environment:
+      - HUB_USER: testuser
+  install_sfdx: &install_sfdx
+    run:
+      name: Install SFDX CLI
+      command: sudo npm install sfdx-cli@6.56.0 --global
+  decrypt_devhub_key: &decrypt_devhub_key
+    run:
+      name: Decrypt DevHub key
+      command: |
+        openssl aes-256-cbc -k $KEY -in .circleci/server.key.enc -out server.key -d -md sha256
+  authenticate_sfdx: &authenticate_sfdx
+    run:
+      name: Authenticate sfdx
+      command: >
+        sfdx force:auth:jwt:grant
+        --clientid "$CONSUMERKEY"
+        --jwtkeyfile server.key
+        --username "$USERNAME"
+        --setdefaultdevhubusername
+  remove_key: &remove_key
+    run:
+      name: Remove Server Key
+      when: always
+      command: |
+          rm server.key           
+  convert_source: &convert_source
+    run:
+      name: Convert Source
+      command: >
+        sfdx force:source:convert
+        --rootdir force-app
+        --outputdir unpackaged
+jobs:
+  test_deploy:
+    <<: *container_config
+    steps:
+      - checkout
+      - *install_sfdx
+      - *decrypt_devhub_key
+      - *authenticate_sfdx
+      - *remove_key
+      - *convert_source
+      - run:
+          name: Deploy
+          command: >
+            sfdx force:mdapi:deploy
+            --deploydir unpackaged
+            --targetusername "$USERNAME"
+            --testlevel RunLocalTests
+            --wait 10
+            --checkonly
+
+  deploy_to_production:
+    <<: *container_config
+    steps:
+      - checkout
+      - *install_sfdx
+      - *decrypt_devhub_key
+      - *authenticate_sfdx
+      - *remove_key
+      - *convert_source
+      - run:
+          name: Deploy
+          command: >
+            sfdx force:mdapi:deploy
+            --deploydir unpackaged
+            --targetusername "$USERNAME"
+            --testlevel RunLocalTests
+            --wait 10
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - test_deploy:
+          filters:
+            branches:
+              ignore: master
+      - deploy_to_production:
+          filters:
+            branches:
+              only: master
