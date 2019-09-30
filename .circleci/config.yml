@@ -17,6 +17,8 @@ references:
         -aes-256-cbc
         -d -in .circleci/server.key.enc
         -out server.key
+        -a
+        -A
         -base64
         -K "$KEY"
         -iv "$IV"
