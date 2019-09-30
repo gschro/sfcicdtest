@@ -53,6 +53,7 @@ global with sharing class FundController {
         String key = '%' + filter.searchKey + '%';
         Integer offset = ((Integer)pageNumber - 1) * pSize;
         PagedResult r =  new PagedResult();
+        //testing deployment
         r.pageSize = pSize;
         r.page = (Integer) pageNumber;
         r.total = [SELECT count() FROM Fund__c 
