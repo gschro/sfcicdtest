@@ -21,7 +21,7 @@ references:
         -base64
         -K "$KEY"
         -iv "$IV"
-  decrypt_devhub_key: &decrypt_devhub_key_working
+  decrypt_devhub_key: &decrypt_devhub_key_working_ok
     run:
       name: Decrypt DevHub key
       command: |
