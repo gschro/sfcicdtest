@@ -13,7 +13,7 @@ references:
     run:
       name: Decrypt DevHub key
       command: |
-        openssl aes-256-cbc -k $KEY -in .circleci/server.key.enc -out server.key -d -md sha256
+        openssl aes-256-cbc -k $KEY -in .circleci/server.key.enc -out server.key -d
   authenticate_sfdx: &authenticate_sfdx
     run:
       name: Authenticate sfdx
