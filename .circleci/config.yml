@@ -21,9 +21,9 @@ references:
       name: Authenticate sfdx
       command: >
         sfdx force:auth:jwt:grant
-        --clientid "$CONSUMERKEY"
+        --clientid $CONSUMERKEY
         --jwtkeyfile server.key
-        --username "$USERNAME"
+        --username $USERNAME
         --setdefaultdevhubusername
   remove_key: &remove_key
     run:
