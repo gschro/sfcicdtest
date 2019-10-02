@@ -3,8 +3,6 @@ references:
   container_config: &container_config
     docker:
       - image: circleci/node:8.11-stretch
-    environment:
-      - HUB_USER: testuser
   install_sfdx: &install_sfdx
     run:
       name: Install SFDX CLI
@@ -14,21 +12,14 @@ references:
       name: Decrypt DevHub key
       command: >
         openssl enc
-        -d
         -nosalt
         -aes-256-cbc
+        -d 
         -in .circleci/server.key.enc
         -out server.key
-        -a
-        -K $KEY
-        -iv $IV
-  decrypt_devhub_key_working_ok: &decrypt_devhub_key_working_ok
-    run:
-      name: Decrypt DevHub key
-      command: |
-        openssl version
-        openssl enc -d -aes-256-cbc -md sha256 -in .circleci/server.key.enc -out server.key -K $KEY -iv $IV
-        find . -name "*.key"        
+        -base64
+        -K "$DECRYPT_KEY"
+        -iv "$DECRYPT_IV"
   authenticate_sfdx: &authenticate_sfdx
     run:
       name: Authenticate sfdx
