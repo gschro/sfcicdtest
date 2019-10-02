@@ -17,7 +17,6 @@ references:
         -d
         -nosalt
         -aes-256-cbc
-        -md sha256
         -in .circleci/server.key.enc
         -out server.key
         -a
@@ -38,13 +37,7 @@ references:
         --clientid "$CONSUMERKEY"
         --jwtkeyfile server.key
         --username "$USERNAME"
-        --setdefaultdevhubusername
-  remove_key: &remove_key
-    run:
-      name: Remove Server Key
-      when: always
-      command: |
-          rm server.key           
+        --setdefaultdevhubusername   
   convert_source: &convert_source
     run:
       name: Convert Source
@@ -60,7 +53,6 @@ jobs:
       - *install_sfdx
       - *decrypt_devhub_key
       - *authenticate_sfdx
-      - *remove_key
       - *convert_source
       - run:
           name: Deploy
@@ -79,7 +71,6 @@ jobs:
       - *install_sfdx
       - *decrypt_devhub_key
       - *authenticate_sfdx
-      - *remove_key
       - *convert_source
       - run:
           name: Deploy
